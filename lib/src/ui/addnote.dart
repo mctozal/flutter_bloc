@@ -11,11 +11,11 @@ class SaveNote extends StatefulWidget {
 }
 
 class _SaveNoteState extends State<SaveNote> {
-  @override
   final _bloc = TodoBloc();
   String noteText;
-  String noteDate = '';
-  String noteHour = '';
+  String noteDate = '${DateTime.now().day} : ${DateTime.now().month} : ${DateTime.now().year}';
+  String noteHour = '${TimeOfDay.now().hour} : ${TimeOfDay.now().minute}';
+  
   String dropdownValue = 'önemli';
   DateTime _date = new DateTime.now();
   TimeOfDay _time = new TimeOfDay.now();
@@ -174,50 +174,7 @@ class _SaveNoteState extends State<SaveNote> {
             SizedBox(
               height: 20,
             ),
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Kategori ',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Gilroy-ExtraBold',
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: TextStyle(
-                      color: Colors.blue[800],
-                    ),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.blue[800],
-                    ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        dropdownValue = newValue;
-                      });
-                    },
-                    items: <String>[
-                      'önemli',
-                      'önemsiz',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      dropdownValue = value;
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ]),
-          ],
+        ],
         ),
       ),
     );

@@ -1,4 +1,3 @@
-
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/src/bloc/todo_bloc.dart';
 import 'package:flutter_bloc/src/bloc/todo_event.dart';
@@ -7,28 +6,29 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 
 class EditNote extends StatefulWidget {
-
-final Notes item;
- EditNote({Key key, @required this.item}) : super(key: key);
+  final Notes item;
+  EditNote({Key key, @required this.item}) : super(key: key);
 
   @override
   _EditNoteState createState() => _EditNoteState();
 }
 
 class _EditNoteState extends State<EditNote> {
-  @override
   final _bloc = TodoBloc();
+  TextEditingController _textController = TextEditingController();
+
   String noteText = '';
   String noteDate = '';
   String category = '';
   String noteHour = '';
-  String dropdownValue;
-
+  DateTime picked;
+  TimeOfDay pickedHour;
+  String dropdownValue = '';
   DateTime _date = new DateTime.now();
   TimeOfDay _time = new TimeOfDay.now();
 
   Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    picked = await showDatePicker(
         context: context,
         initialDate: _date,
         firstDate: new DateTime(2016),
@@ -38,53 +38,61 @@ class _EditNoteState extends State<EditNote> {
       print('Date selected: ${_date.toString()}');
       setState(() {
         _date = picked;
+        noteDate = picked.toString();
       });
     }
   }
 
   Future<Null> _selectTime(BuildContext context) async {
-    final TimeOfDay picked = await showTimePicker(
+    pickedHour = await showTimePicker(
       context: context,
       initialTime: _time,
     );
-    if (picked != null && picked != _time) {
+    if (pickedHour != null && pickedHour != _time) {
       print('Time selected: ${_time.toString()}');
       setState(() {
-        _time = picked;
+        _time = pickedHour;
+        noteHour = pickedHour.toString();
       });
     }
   }
 
   Widget build(BuildContext context) {
-    dropdownValue= widget.item.category;
+    _textController.text = '${widget.item.noteText}';
+
+    noteDate = widget.item.noteDate;
+    noteHour = widget.item.noteHour;
+    dropdownValue = widget.item.category;
+
     return Scaffold(
       appBar: AppBar(title: Text('Düzenle'), actions: <Widget>[
         IconButton(
             icon: const Icon(Icons.done),
             tooltip: 'Ara',
             onPressed: () async {
-              if (noteText.isNotEmpty) {
+              if (_textController.text.isNotEmpty) {
                 Notes add = Notes(
-                    noteText: noteText,
+                    id: widget.item.id,
+                    noteText: _textController.text,
                     noteDate: noteDate,
                     noteHour: noteHour,
-                    category: category,
+                    category: dropdownValue,
                     blocked: false);
                 await _bloc.updateTodos(add);
                 await _bloc.getTodos();
                 _bloc.dispatch(
                   AddTodoEvent(
                     todo: Notes(
-                        noteText: noteText,
+                        id: widget.item.id,
+                        noteText: _textController.text,
                         noteDate: noteDate,
                         noteHour: noteHour,
-                        category: category),
+                        category: dropdownValue),
                   ),
                 );
 
                 Navigator.pop(context);
-              }
-              else if (noteText.isEmpty) {
+              } else if (_textController.text.isEmpty) {
                 Fluttertoast.showToast(
                   msg: 'Lütfen not girin',
                   textColor: Colors.indigo[900],
@@ -94,8 +102,7 @@ class _EditNoteState extends State<EditNote> {
                   backgroundColor: Colors.lightBlue[900],
                   fontSize: 14.0,
                 );
-              }
-              else {
+              } else {
                 Fluttertoast.showToast(
                   msg: 'Lütfen not girin',
                   textColor: Colors.indigo[900],
@@ -123,9 +130,7 @@ class _EditNoteState extends State<EditNote> {
               ),
             ),
             TextField(
-              decoration: InputDecoration(
-               prefixText: widget.item.noteText,
-              ),
+              controller: _textController,
               onChanged: (text) {
                 noteText = text;
               },
@@ -149,12 +154,9 @@ class _EditNoteState extends State<EditNote> {
                     tooltip: 'Tarihi seçin.',
                     onPressed: () async {
                       await _selectDate(context);
-                      noteDate =
-                          ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}';
                     },
                   ),
-                  Text(
-                      ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}'),
+                  buildDate(),
                 ]),
             SizedBox(
               height: 20,
@@ -175,62 +177,37 @@ class _EditNoteState extends State<EditNote> {
                     tooltip: 'Saati seçin.',
                     onPressed: () async {
                       await _selectTime(context);
-                      noteHour =
-                          ' ${_time.hour.toString()} : ${_time.minute.toString()} ';
                     },
                   ),
-                  Text(
-                      ' ${_time.hour.toString()} : ${_time.minute.toString()} '),
+                  buildHour(),
                 ]),
             SizedBox(
               height: 20,
             ),
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Kategori ',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Gilroy-ExtraBold',
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: TextStyle(
-                      color: Colors.blue[800],
-                    ),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.blue[800],
-                    ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        dropdownValue = newValue;
-                      });
-                    },
-                    items: <String>[
-                      'önemli',
-                      'önemsiz',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      category = value;
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ]),
-          ],
+        ],
         ),
       ),
     );
+  }
+
+ 
+  Text buildHour() {
+    if (pickedHour == null) {
+      noteHour = '${widget.item.noteHour}';
+      return Text('${widget.item.noteHour}');
+    } else
+      noteHour = ' ${_time.hour.toString()} : ${_time.minute.toString()} ';
+    return Text(' ${_time.hour.toString()} : ${_time.minute.toString()} ');
+  }
+
+  Text buildDate() {
+    if (picked == null) {
+      noteDate = '${widget.item.noteDate}';
+      return Text('${widget.item.noteDate}');
+    } else
+      noteDate =
+          ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}';
+    return Text(
+        ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}');
   }
 }

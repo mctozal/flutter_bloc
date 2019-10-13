@@ -38,8 +38,6 @@ class _HomepageState extends State<Homepage> {
       return Icon(Icons.check);
   }
 
-  _searchBar(String searchText) {}
-
   @override
   void dispose() {
     _bloc.dispose();

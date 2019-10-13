@@ -32,9 +32,8 @@ class TodoDao {
 
   updateClient(Notes newClient) async {
     final dbProvider = await db.database;
-    var res = await dbProvider.update("Notes", newClient.toJson(),
+    return dbProvider.update("Notes", newClient.toJson(),
         where: "id = ?", whereArgs: [newClient.id]);
-    return res;
   }
 
   getClient(int id) async {

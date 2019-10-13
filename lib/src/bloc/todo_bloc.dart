@@ -25,7 +25,7 @@ class TodoBloc {
   }
 
   updateTodos(Notes notes) async {
-    _todoStateController.sink.add(await _todoRepository.updateClient(notes));
+    await _todoRepository.updateClient(notes);
   }
 
   searchTodos(String search) async {
