@@ -4,6 +4,7 @@ import 'package:flutter_bloc/src/bloc/todo_database.dart';
 import 'package:flutter_bloc/src/bloc/todo_event.dart';
 import 'package:flutter_bloc/src/model/constants.dart';
 import 'package:flutter_bloc/src/model/noteModel.dart';
+import 'package:flutter_bloc/src/ui/editNote.dart';
 
 import 'addnote.dart';
 
@@ -27,6 +28,14 @@ class _HomepageState extends State<Homepage> {
 
   choiceAction(String choice) {
     return choice;
+  }
+
+  Icon buildIcon(snapshot, index) {
+    Notes item = snapshot.data[index];
+    if (item.blocked == false) {
+      return Icon(Icons.priority_high);
+    } else
+      return Icon(Icons.check);
   }
 
   _searchBar(String searchText) {}
@@ -53,7 +62,9 @@ class _HomepageState extends State<Homepage> {
                   if (this.iconSearch.icon == Icons.search) {
                     this.iconSearch = Icon(Icons.cancel);
                     this.cusSearchBar = TextField(
-                      textInputAction: TextInputAction.go,
+                      onChanged: (text) {
+                        _bloc.searchTodos(text);
+                      },
                       decoration: InputDecoration(
                           border: InputBorder.none, hintText: "Arama Yapın"),
                       style: TextStyle(
@@ -132,7 +143,7 @@ class _HomepageState extends State<Homepage> {
                         fontSize: 12.0,
                       ),
                     ),
-                    leading: Icon(Icons.keyboard_arrow_right),
+                    leading: buildIcon(snapshot, index),
                     trailing: Checkbox(
                       onChanged: (bool value) {
                         _database.blockOrUnblock(item);
@@ -140,6 +151,15 @@ class _HomepageState extends State<Homepage> {
                       },
                       value: item.blocked,
                     ),
+                    onTap: () {
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => new EditNote(item:item),
+                        ),
+                      );
+                    },
                   ),
                 );
               },

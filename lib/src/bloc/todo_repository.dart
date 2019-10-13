@@ -13,7 +13,7 @@ class TodoRepository {
 
   getClient(int id) => todoDao.getClient(id);
 
-  searchClient(String search) => todoDao.searchClient(search);
+  Future<List<Notes>> searchClient(String search) => todoDao.searchClient(search);
 
   Future<List<Notes>> getBlockedClients() => todoDao.getBlockedClients();
 

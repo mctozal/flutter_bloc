@@ -43,15 +43,17 @@ class TodoDao {
     return res.isNotEmpty ? Notes.fromJson(res.first) : null;
   }
 
-  searchClient(String search) async {
+  Future<List<Notes>> searchClient(String search) async {
     final dbProvider = await db.database;
-    var res = await dbProvider.query("Notes", where: "noteText = ?", whereArgs: [search]);
-    return res.isNotEmpty ? Notes.fromJson(res.first) : null;
+    var res = await dbProvider
+        .query("Notes", where: "noteText = ?", whereArgs: [search]);
+    List<Notes> list =
+        res.isNotEmpty ? res.map((c) => Notes.fromJson(c)).toList() : [];
+    return list;
   }
 
   Future<List<Notes>> getBlockedClients() async {
     final dbProvider = await db.database;
-
     print("works");
     // var res = await db.rawQuery("SELECT * FROM Client WHERE blocked=1");
     var res =

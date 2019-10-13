@@ -1,3 +1,4 @@
+
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/src/bloc/todo_bloc.dart';
 import 'package:flutter_bloc/src/bloc/todo_event.dart';
@@ -5,18 +6,24 @@ import 'package:flutter_bloc/src/model/noteModel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 
-class SaveNote extends StatefulWidget {
+class EditNote extends StatefulWidget {
+
+final Notes item;
+ EditNote({Key key, @required this.item}) : super(key: key);
+
   @override
-  _SaveNoteState createState() => _SaveNoteState();
+  _EditNoteState createState() => _EditNoteState();
 }
 
-class _SaveNoteState extends State<SaveNote> {
+class _EditNoteState extends State<EditNote> {
   @override
   final _bloc = TodoBloc();
-  String noteText;
+  String noteText = '';
   String noteDate = '';
+  String category = '';
   String noteHour = '';
-  String dropdownValue = 'önemli';
+  String dropdownValue;
+
   DateTime _date = new DateTime.now();
   TimeOfDay _time = new TimeOfDay.now();
 
@@ -49,20 +56,21 @@ class _SaveNoteState extends State<SaveNote> {
   }
 
   Widget build(BuildContext context) {
+    dropdownValue= widget.item.category;
     return Scaffold(
-      appBar: AppBar(title: Text('Yeni Not'), actions: <Widget>[
+      appBar: AppBar(title: Text('Düzenle'), actions: <Widget>[
         IconButton(
             icon: const Icon(Icons.done),
-            tooltip: 'Search',
+            tooltip: 'Ara',
             onPressed: () async {
               if (noteText.isNotEmpty) {
                 Notes add = Notes(
                     noteText: noteText,
                     noteDate: noteDate,
                     noteHour: noteHour,
-                    category: dropdownValue,
+                    category: category,
                     blocked: false);
-                await _bloc.newClient(add);
+                await _bloc.updateTodos(add);
                 await _bloc.getTodos();
                 _bloc.dispatch(
                   AddTodoEvent(
@@ -70,7 +78,7 @@ class _SaveNoteState extends State<SaveNote> {
                         noteText: noteText,
                         noteDate: noteDate,
                         noteHour: noteHour,
-                        category: dropdownValue),
+                        category: category),
                   ),
                 );
 
@@ -115,6 +123,9 @@ class _SaveNoteState extends State<SaveNote> {
               ),
             ),
             TextField(
+              decoration: InputDecoration(
+               prefixText: widget.item.noteText,
+              ),
               onChanged: (text) {
                 noteText = text;
               },
@@ -209,7 +220,7 @@ class _SaveNoteState extends State<SaveNote> {
                       'önemli',
                       'önemsiz',
                     ].map<DropdownMenuItem<String>>((String value) {
-                      dropdownValue = value;
+                      category = value;
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),

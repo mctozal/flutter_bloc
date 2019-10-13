@@ -24,6 +24,10 @@ class TodoBloc {
     _todoStateController.sink.add(await _todoRepository.getAllClients());
   }
 
+  updateTodos(Notes notes) async {
+    _todoStateController.sink.add(await _todoRepository.updateClient(notes));
+  }
+
   searchTodos(String search) async {
     _todoStateController.sink.add(await _todoRepository.searchClient(search));
   }
@@ -38,9 +42,7 @@ class TodoBloc {
     getTodos();
   }
 
-
   void _mapEventToState(TodoEvent event) {
-    
     if (event is AddTodoEvent) {
       _todos.add(event.todo);
     } else if (event is DeleteTodoEvent) {
