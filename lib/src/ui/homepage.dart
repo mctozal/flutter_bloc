@@ -5,6 +5,7 @@ import 'package:flutter_bloc/src/bloc/todo_event.dart';
 import 'package:flutter_bloc/src/model/constants.dart';
 import 'package:flutter_bloc/src/model/noteModel.dart';
 import 'package:flutter_bloc/src/ui/editNote.dart';
+import 'package:flutter_bloc/src/ui/settings.dart';
 
 import 'about.dart';
 import 'addnote.dart';
@@ -32,6 +33,12 @@ class _HomepageState extends State<Homepage> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AboutMe()),
+      );
+    }
+    else if (choice == "Ayarlar"){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Settings()),
       );
     }
     return choice;
