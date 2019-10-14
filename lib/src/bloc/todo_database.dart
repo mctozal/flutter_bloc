@@ -12,9 +12,9 @@ class TodoDao {
     int id = table.first["id"];
     //insert to the table using the new id
     var raw = await dbProvider.rawInsert(
-        "INSERT Into Notes (id,noteText,noteDate,blocked)"
-        " VALUES (?,?,?,?)",
-        [id, newClient.noteText, newClient.noteDate, newClient.blocked]);
+        "INSERT Into Notes (id,noteText,noteHour,noteDate,blocked)"
+        " VALUES (?,?,?,?,?)",
+        [id, newClient.noteText,newClient.noteHour, newClient.noteDate, newClient.blocked]);
     return raw;
   }
 

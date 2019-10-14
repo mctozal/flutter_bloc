@@ -6,6 +6,7 @@ import 'package:flutter_bloc/src/model/constants.dart';
 import 'package:flutter_bloc/src/model/noteModel.dart';
 import 'package:flutter_bloc/src/ui/editNote.dart';
 
+import 'about.dart';
 import 'addnote.dart';
 
 class Homepage extends StatefulWidget {
@@ -27,6 +28,12 @@ class _HomepageState extends State<Homepage> {
   );
 
   choiceAction(String choice) {
+    if (choice == "Hakkında") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AboutMe()),
+      );
+    }
     return choice;
   }
 
@@ -57,7 +64,7 @@ class _HomepageState extends State<Homepage> {
               tooltip: 'Search',
               onPressed: () {
                 setState(() {
-                   if (this.iconSearch.icon == Icons.search) {
+                  if (this.iconSearch.icon == Icons.search) {
                     this.iconSearch = Icon(Icons.cancel);
                     this.cusSearchBar = TextField(
                       onChanged: (text) {
@@ -80,7 +87,7 @@ class _HomepageState extends State<Homepage> {
                         fontSize: 16,
                       ),
                     );
-                  } 
+                  }
                 });
               }),
           PopupMenuButton<String>(
@@ -163,7 +170,8 @@ class _HomepageState extends State<Homepage> {
             );
           } else if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          } 
+          else if (snapshot.hasError) {
             return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(

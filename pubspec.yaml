@@ -28,6 +28,7 @@ dependencies:
   sqflite: ^0.12.2+1
   path_provider: ^0.4.1
   datetime_picker_formfield:
+  flutter_date_picker: ^0.1.8  
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

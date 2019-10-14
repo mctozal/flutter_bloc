@@ -12,16 +12,20 @@ class SaveNote extends StatefulWidget {
 
 class _SaveNoteState extends State<SaveNote> {
   final _bloc = TodoBloc();
-  String noteText;
-  String noteDate = '${DateTime.now().day} : ${DateTime.now().month} : ${DateTime.now().year}';
-  String noteHour = '${TimeOfDay.now().hour} : ${TimeOfDay.now().minute}';
-  
-  String dropdownValue = 'önemli';
+  TextEditingController _textController = TextEditingController();
+
+  String noteText = '';
+  String noteDate = '';
+  String category = '';
+  String noteHour = DateTime.now().toString();
+  DateTime picked;
+  TimeOfDay pickedHour;
+  String dropdownValue = '';
   DateTime _date = new DateTime.now();
   TimeOfDay _time = new TimeOfDay.now();
 
   Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    picked = await showDatePicker(
         context: context,
         initialDate: _date,
         firstDate: new DateTime(2016),
@@ -31,19 +35,21 @@ class _SaveNoteState extends State<SaveNote> {
       print('Date selected: ${_date.toString()}');
       setState(() {
         _date = picked;
+        noteDate = picked.toString();
       });
     }
   }
 
   Future<Null> _selectTime(BuildContext context) async {
-    final TimeOfDay picked = await showTimePicker(
+    pickedHour = await showTimePicker(
       context: context,
       initialTime: _time,
     );
-    if (picked != null && picked != _time) {
+    if (pickedHour != null && pickedHour != _time) {
       print('Time selected: ${_time.toString()}');
       setState(() {
-        _time = picked;
+        _time = pickedHour;
+        noteHour = pickedHour.toString();
       });
     }
   }
@@ -53,11 +59,11 @@ class _SaveNoteState extends State<SaveNote> {
       appBar: AppBar(title: Text('Yeni Not'), actions: <Widget>[
         IconButton(
             icon: const Icon(Icons.done),
-            tooltip: 'Search',
+            tooltip: 'Tamam',
             onPressed: () async {
-              if (noteText.isNotEmpty) {
+              if (_textController.text.isNotEmpty) {
                 Notes add = Notes(
-                    noteText: noteText,
+                    noteText: _textController.text,
                     noteDate: noteDate,
                     noteHour: noteHour,
                     category: dropdownValue,
@@ -67,7 +73,7 @@ class _SaveNoteState extends State<SaveNote> {
                 _bloc.dispatch(
                   AddTodoEvent(
                     todo: Notes(
-                        noteText: noteText,
+                        noteText: _textController.text,
                         noteDate: noteDate,
                         noteHour: noteHour,
                         category: dropdownValue),
@@ -75,8 +81,7 @@ class _SaveNoteState extends State<SaveNote> {
                 );
 
                 Navigator.pop(context);
-              }
-              else if (noteText.isEmpty) {
+              } else if (_textController.text.isEmpty) {
                 Fluttertoast.showToast(
                   msg: 'Lütfen not girin',
                   textColor: Colors.indigo[900],
@@ -86,8 +91,7 @@ class _SaveNoteState extends State<SaveNote> {
                   backgroundColor: Colors.lightBlue[900],
                   fontSize: 14.0,
                 );
-              }
-              else {
+              } else {
                 Fluttertoast.showToast(
                   msg: 'Lütfen not girin',
                   textColor: Colors.indigo[900],
@@ -115,6 +119,7 @@ class _SaveNoteState extends State<SaveNote> {
               ),
             ),
             TextField(
+              controller: _textController,
               onChanged: (text) {
                 noteText = text;
               },
@@ -138,12 +143,9 @@ class _SaveNoteState extends State<SaveNote> {
                     tooltip: 'Tarihi seçin.',
                     onPressed: () async {
                       await _selectDate(context);
-                      noteDate =
-                          ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}';
                     },
                   ),
-                  Text(
-                      ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}'),
+                  buildDate(),
                 ]),
             SizedBox(
               height: 20,
@@ -164,19 +166,28 @@ class _SaveNoteState extends State<SaveNote> {
                     tooltip: 'Saati seçin.',
                     onPressed: () async {
                       await _selectTime(context);
-                      noteHour =
-                          ' ${_time.hour.toString()} : ${_time.minute.toString()} ';
                     },
                   ),
-                  Text(
-                      ' ${_time.hour.toString()} : ${_time.minute.toString()} '),
+                  buildHour(),
                 ]),
             SizedBox(
               height: 20,
             ),
-        ],
+          ],
         ),
       ),
     );
+  }
+
+  Text buildDate() {
+    noteDate =
+        ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}';
+    return Text(
+        ' ${_date.day.toString()} : ${_date.month.toString()} : ${_date.year.toString()}');
+  }
+
+  Text buildHour() {
+    noteHour = '${_time.hour.toString()} : ${_time.minute.toString()}';
+    return Text('${_time.hour.toString()} : ${_time.minute.toString()}');
   }
 }
