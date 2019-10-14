@@ -57,7 +57,7 @@ class _HomepageState extends State<Homepage> {
               tooltip: 'Search',
               onPressed: () {
                 setState(() {
-                  if (this.iconSearch.icon == Icons.search) {
+                   if (this.iconSearch.icon == Icons.search) {
                     this.iconSearch = Icon(Icons.cancel);
                     this.cusSearchBar = TextField(
                       onChanged: (text) {
@@ -80,7 +80,7 @@ class _HomepageState extends State<Homepage> {
                         fontSize: 16,
                       ),
                     );
-                  }
+                  } 
                 });
               }),
           PopupMenuButton<String>(
@@ -150,11 +150,10 @@ class _HomepageState extends State<Homepage> {
                       value: item.blocked,
                     ),
                     onTap: () {
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => new EditNote(item:item),
+                          builder: (context) => new EditNote(item: item),
                         ),
                       );
                     },

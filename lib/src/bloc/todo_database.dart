@@ -44,11 +44,11 @@ class TodoDao {
 
   Future<List<Notes>> searchClient(String search) async {
     final dbProvider = await db.database;
-    var res = await dbProvider
-        .query("Notes", where: "noteText = ?", whereArgs: [search]);
+     var res = await dbProvider.query("Notes");
     List<Notes> list =
         res.isNotEmpty ? res.map((c) => Notes.fromJson(c)).toList() : [];
-    return list;
+    return list.where((Notes notes)=>notes.noteText.toLowerCase()
+    .contains(search.toLowerCase())).toList();
   }
 
   Future<List<Notes>> getBlockedClients() async {
